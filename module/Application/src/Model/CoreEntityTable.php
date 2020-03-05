@@ -71,6 +71,7 @@ class CoreEntityTable {
                         case 'text':
                         case 'textarea':
                         case 'email':
+                        case 'upload':
                         case 'tel':
                         case 'url':
                             $aData[$sFieldName] = $oObject->$sFieldName;
@@ -120,6 +121,14 @@ class CoreEntityTable {
             } else {
                 # its a like
                 $oWh->like(substr($sWh,0,strlen($sWh)-strlen('-like')),$aWhere[$sWh].'%');
+            }
+
+            $bIsLike = stripos($sWh,'-lkall');
+            if($bIsLike === false) {
+
+            } else {
+                # its a like
+                $oWh->like(substr($sWh,0,strlen($sWh)-strlen('-lkall')),'%'.$aWhere[$sWh].'%');
             }
 
             $bIsIDFS = stripos($sWh,'_idfs');
@@ -202,6 +211,9 @@ class CoreEntityTable {
             'label' => $oSkeleton->label,
         ];
 
+        if(count($aDefaultData) > 0) {
+            $aData = $aDefaultData;
+        }
         $aData = $this->attachDynamicFields($aData,$oSkeleton);
 
         $id = (int) $oSkeleton->id;
